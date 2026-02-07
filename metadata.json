@@ -1,0 +1,8 @@
+{
+  "name": "Phenogram",
+  "description": "The ultimate social platform for cannabis enthusiasts featuring stories, reels, AI-powered strain analysis, and community feeds.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
