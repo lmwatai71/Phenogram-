@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, DollarSign, TrendingUp, CreditCard, Gift, Users, ChevronRight, Activity } from 'lucide-react';
+import { ArrowLeft, DollarSign, TrendingUp, CreditCard, Gift, Users, ChevronRight, Activity, CheckCircle } from 'lucide-react';
 import { User } from '../types';
 
 interface EarningsProps {
@@ -9,6 +9,7 @@ interface EarningsProps {
 
 const Earnings: React.FC<EarningsProps> = ({ currentUser, onBack }) => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'year'>('month');
+  const [cashOutStatus, setCashOutStatus] = useState<'idle' | 'processing' | 'success'>('idle');
 
   // Mock Data
   const transactions = [
@@ -17,6 +18,14 @@ const Earnings: React.FC<EarningsProps> = ({ currentUser, onBack }) => {
     { id: 3, type: 'Gift', user: 'dank_daily', amount: 10.00, time: '2d ago', icon: <Gift size={16} className="text-pink-500" /> },
     { id: 4, type: 'Creator Fund', user: 'Phenogram', amount: 45.30, time: '1w ago', icon: <Activity size={16} className="text-blue-500" /> },
   ];
+
+  const handleCashOut = () => {
+      setCashOutStatus('processing');
+      setTimeout(() => {
+          setCashOutStatus('success');
+          setTimeout(() => setCashOutStatus('idle'), 3000);
+      }, 1500);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white pb-8 animate-in slide-in-from-right duration-300">
@@ -38,9 +47,34 @@ const Earnings: React.FC<EarningsProps> = ({ currentUser, onBack }) => {
             <h2 className="text-4xl font-black text-white mb-4 tracking-tight">
                 ${(currentUser.balance || 0).toFixed(2)}
             </h2>
-            <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20">
-                <CreditCard size={18} />
-                Cash Out
+            
+            <button 
+                onClick={handleCashOut}
+                disabled={cashOutStatus !== 'idle'}
+                className={`w-full font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg ${
+                    cashOutStatus === 'success' 
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' 
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/20'
+                }`}
+            >
+                {cashOutStatus === 'idle' && (
+                    <>
+                        <CreditCard size={18} />
+                        Cash Out
+                    </>
+                )}
+                {cashOutStatus === 'processing' && (
+                    <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Processing...
+                    </>
+                )}
+                {cashOutStatus === 'success' && (
+                    <>
+                        <CheckCircle size={18} />
+                        Sent to Wallet
+                    </>
+                )}
             </button>
         </div>
 
